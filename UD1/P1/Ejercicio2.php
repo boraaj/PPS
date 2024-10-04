@@ -1,8 +1,20 @@
 <?php
-$command_inyection_pattern = "/ls|whoami|cd/";
+// $command_inyection_pattern = "/ls|whoami|cd/";
 $word = readline("Introduce la palabra: ");
 
-if (preg_match($command_inyection_pattern, $word))
-    echo "Esa palabra no está admitida";
-else
-    echo "Tu palabra => " . $word;
+switch ($word) {
+    case str_contains($word, "ls");
+        echo $word . " no es una palabra admitida";
+        break;
+    case str_contains($word, "whoami");
+        echo $word . " no es una palabra admitida";
+        break;
+    case str_contains($word, "cd");
+        echo $word . " no es una palabra admitida";
+        break;
+    case str_contains($word, "id");
+        echo $word . " no es una palabra admitida";
+        break;
+    default:
+        echo $word . " Es una palabra admitida";
+}
