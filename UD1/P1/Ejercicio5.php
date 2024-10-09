@@ -17,39 +17,46 @@ function validacion_espacios_at_maxchars(string $email_entero)
 
     if (substr_count($email_entero, "@") != 1)
         return false;
-    if (str_contains($email_entero, " ") || strlen($email_entero)> 320)
+    elseif (str_contains($email_entero, " ") || strlen($email_entero) > 320)
         return false;
-    return true;
+    else {
+        $parte_local_mail = explode("@", $email_entero)[0];
+        $parte_domain_mail = explode("@", $email_entero)[1];
+        validacion_local($parte_local_mail, $parte_domain_mail);
+    }
 }
 
-function validacion_local(string $parte_local): bool
+function validacion_local(string $parte_local, $parte_domain_mail)
 {
-
+    $parte_local_valida = false;
     $invalid_dots = "/\.{2,}/";
     $inyection_chars_patters = "/['\" <>&;?!|%$()\[\]{}*+\-`~#]/";
 
     //Contiene entre 1 y 64 caracteres
     if (strlen($parte_local) > 64 || strlen($parte_local) < 1)
-        return false;
+        $parte_local_valida = false;
     //contiene @ o punto al principio y al final. 
     if (substr_count($parte_local, "@") || $parte_local[0] == "." || substr($parte_local, -1) == ".")
-        return false;
+        $parte_local_valida = false;
     // posee mas de dos puntos consecutivos entre medio. 
     if (preg_match($invalid_dots, $parte_local))
-        return false;
-    //Contiene algun caracter especial para hacer inyecciones. 
+        $parte_local_valida = false;
+    //Contiene algun caracter especial entre comillas. 
     if (substr_count($parte_local, '"') == 2) {
         $primera_comilla = strpos($parte_local, '"');
         $segunda_comilla = strpos($parte_local, '"', $primera_comilla + 1);
         $substring_comillas = substr($parte_local, $primera_comilla + 1, $segunda_comilla - $primera_comilla - 1);
+        //En este caso el caractere especial sería válido porque está escrito entre comillas. 
         if (preg_match($inyection_chars_patters, $substring_comillas))
-            return true;
+            $parte_local_valida = true;
     } else
-        return false;
-
+        $parte_local_valida = false;
+    //Evaluar si contiene caracteres especiales que no estén entre comillas. 
     if (preg_match($inyection_chars_patters, $parte_local))
-        return false;
-    return true;
+        $parte_local_valida = false;
+
+    if ($parte_local_valida)
+        return validacion_domain($parte_domain_mail);
 }
 
 function validacion_domain($parte_domain)
@@ -69,17 +76,38 @@ function validacion_domain($parte_domain)
 }
 
 
-
+//TODO DEPURAR ESTO. 
 function validacion_mail(string $email_entero)
 {
 
     if (validacion_espacios_at_maxchars($email_entero))
-        echo "Email valido general";
+        echo "Email valido";
     else
-        echo "Email invalido general";
+        echo "Email invalido";
 }
 
 //Main
-$input_email_entero = readline("Introduce tu correo electrónico: ");
 
-validacion_mail($input_email_entero);
+$email = isset($_POST['email']) ? $_POST['email'] : '';
+
+validacion_mail($email);
+
+
+// <!DOCTYPE html>
+// <html>
+
+// <head>
+//     <title>Ej5</title>
+// </head>
+
+// <body>
+//     <h2>Ejercicio 5</h2>
+//     <form action="ej5.php" method="POST">
+//         <label for="email">Email:</label>
+//         <input type="text" id="email" name="email" required><br><br>
+
+//         <button type="submit">Enviar</button>
+//     </form>
+// </body>
+
+// </html>
