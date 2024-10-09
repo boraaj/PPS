@@ -15,9 +15,9 @@
 function validacion_espacios_at_maxchars(string $email_entero)
 {
 
-    if (substr_count($email_entero, "@") > 1 || substr_count($email_entero, "@") < 1)
+    if (substr_count($email_entero, "@") != 1)
         return false;
-    if (str_contains($email_entero, " ") || count_chars($email_entero > 320))
+    if (str_contains($email_entero, " ") || strlen($email_entero)> 320)
         return false;
     return true;
 }
@@ -70,16 +70,16 @@ function validacion_domain($parte_domain)
 
 
 
-function validacion_mail(string $email_entero): bool
+function validacion_mail(string $email_entero)
 {
 
     if (validacion_espacios_at_maxchars($email_entero))
-        return true;
-
-    return false;
+        echo "Email valido general";
+    else
+        echo "Email invalido general";
 }
 
+//Main
+$input_email_entero = readline("Introduce tu correo electrónico: ");
 
-$input_email_entero = readline("Insotruce tu correo electrónico: ");
-
-    // generales . 
+validacion_mail($input_email_entero);
