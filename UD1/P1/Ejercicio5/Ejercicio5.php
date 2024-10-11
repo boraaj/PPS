@@ -19,28 +19,23 @@ function validacion_espacios_at_maxchars(string $email_entero)
         return false;
     elseif (str_contains($email_entero, " ") || strlen($email_entero) > 320)
         return false;
-    else {
-        $parte_local_mail = explode("@", $email_entero)[0];
-        $parte_domain_mail = explode("@", $email_entero)[1];
-        validacion_local($parte_local_mail, $parte_domain_mail);
-    }
+    return true;
 }
 
-function validacion_local(string $parte_local, $parte_domain_mail)
+function validacion_local(string $parte_local)
 {
-    $parte_local_valida = false;
     $invalid_dots = "/\.{2,}/";
     $inyection_chars_patters = "/['\" <>&;?!|%$()\[\]{}*+\-`~#]/";
 
     //Contiene entre 1 y 64 caracteres
     if (strlen($parte_local) > 64 || strlen($parte_local) < 1)
-        $parte_local_valida = false;
-    //contiene @ o punto al principio y al final. 
-    if (substr_count($parte_local, "@") || $parte_local[0] == "." || substr($parte_local, -1) == ".")
-        $parte_local_valida = false;
+        return false;
+    //contiene punto al principio y al final. 
+    if ($parte_local[0] == "." || substr($parte_local, -1) == ".")
+        return false;
     // posee mas de dos puntos consecutivos entre medio. 
     if (preg_match($invalid_dots, $parte_local))
-        $parte_local_valida = false;
+        return false;
     //Contiene algun caracter especial entre comillas. 
     if (substr_count($parte_local, '"') == 2) {
         $primera_comilla = strpos($parte_local, '"');
@@ -48,15 +43,13 @@ function validacion_local(string $parte_local, $parte_domain_mail)
         $substring_comillas = substr($parte_local, $primera_comilla + 1, $segunda_comilla - $primera_comilla - 1);
         //En este caso el caractere especial sería válido porque está escrito entre comillas. 
         if (preg_match($inyection_chars_patters, $substring_comillas))
-            $parte_local_valida = true;
-    } else
-        $parte_local_valida = false;
+            return true;
+    }
     //Evaluar si contiene caracteres especiales que no estén entre comillas. 
     if (preg_match($inyection_chars_patters, $parte_local))
-        $parte_local_valida = false;
+        return false;
 
-    if ($parte_local_valida)
-        return validacion_domain($parte_domain_mail);
+    return true;
 }
 
 function validacion_domain($parte_domain)
@@ -73,21 +66,37 @@ function validacion_domain($parte_domain)
         return false;
     if (preg_match($inyection_chars_patters, $parte_domain))
         return false;
+    return true;
 }
 
 
-//TODO DEPURAR ESTO. 
+
 function validacion_mail(string $email_entero)
 {
 
-    if (validacion_espacios_at_maxchars($email_entero))
-        echo "Email valido";
-    else
-        echo "Email invalido";
+    if (validacion_espacios_at_maxchars($email_entero)) {
+        $parte_local_mail = explode("@", $email_entero)[0];
+        if (validacion_local($parte_local_mail)) {
+            $parte_domain_mail = explode("@", $email_entero)[1];
+            if (validacion_domain($parte_domain_mail))
+                echo "validacion domain valida";
+            else
+                echo "Validacion domain invalida";
+        } else
+            echo "validacion local invalida " . $parte_local_mail;
+    } else
+        echo "Validacion General Invalida";
+    // elseif (validacion_local($parte_local_mail)) {
+    //     echo "parte local OK";
+    // } else
+    //     echo "mail no valido";
 }
+
+// validacion_local($parte_local_mail, $parte_domain_mail);
 
 //Main
 
 $email = isset($_POST['email']) ? $_POST['email'] : '';
 
-validacion_mail($email);
+if (validacion_mail($email))
+    echo "El mail es valido";
