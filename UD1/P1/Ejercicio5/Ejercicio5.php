@@ -79,23 +79,20 @@ function validacion_mail(string $email_entero)
         if (validacion_local($parte_local_mail)) {
             $parte_domain_mail = explode("@", $email_entero)[1];
             if (validacion_domain($parte_domain_mail))
-                echo "validacion domain valida";
+                //echo "validacion domain valida";
+                return true;
             else
-                echo "Validacion domain invalida";
-            echo "validacion local valida";
-        } else
-            echo "validacion local invalida " . $parte_local_mail;
+                //echo "Validacion domain invalida";
+                return false;
+        } else {
+            //echo "validacion local invalida " . $parte_local_mail;
+            return false;
+        }
     } else
-        echo "Validacion General Invalida";
+        //echo "Validacion General Invalida";
+        return false;
 }
 
-function validacion_general_test(string $email)
-{
-    if (filter_var($email, FILTER_VALIDATE_EMAIL))
-        echo "mail valido";
-    else
-        echo "mail invallido";
-}
 
 
 //Main
@@ -104,3 +101,15 @@ $email = isset($_POST['email']) ? $_POST['email'] : '';
 
 if (validacion_mail($email))
     echo "El mail es valido";
+else
+    echo "Mail no valido";
+
+
+//Opcion 2 utilizando filter_var pero se salta algunas restriciones establecidas por los standares más extendidos como son el RFC 5321 RFC 5322
+// function validacion_general_test(string $email)
+// {
+//     if (filter_var($email, FILTER_VALIDATE_EMAIL))
+//         echo "mail valido";
+//     else
+//         echo "mail invallido";
+// }
