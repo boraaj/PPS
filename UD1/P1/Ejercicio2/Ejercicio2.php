@@ -17,12 +17,6 @@ if ($valido)
 else
     echo "Input no valido";
 
-
-// CODIGO HTML CON FORM
-
-
-
-
 //OPCION 2
 
 // <?php

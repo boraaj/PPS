@@ -82,17 +82,21 @@ function validacion_mail(string $email_entero)
                 echo "validacion domain valida";
             else
                 echo "Validacion domain invalida";
+            echo "validacion local valida";
         } else
             echo "validacion local invalida " . $parte_local_mail;
     } else
         echo "Validacion General Invalida";
-    // elseif (validacion_local($parte_local_mail)) {
-    //     echo "parte local OK";
-    // } else
-    //     echo "mail no valido";
 }
 
-// validacion_local($parte_local_mail, $parte_domain_mail);
+function validacion_general_test(string $email)
+{
+    if (filter_var($email, FILTER_VALIDATE_EMAIL))
+        echo "mail valido";
+    else
+        echo "mail invallido";
+}
+
 
 //Main
 

@@ -1,22 +1,19 @@
 <?php
+session_start();
 
-function generateToken(){
-    $continue = true;
-    while ($continue) {
-        $session_token = rand(1000, 10000);
-    
-        echo "Este es tu token de sesión: \n" . $session_token;
-        echo "\nTienes 5 segundoss para usarlo";
-    
-        sleep(5);
-    
-        $option = readline("\n¿Quieres volver a solicitar un token? (s/n) : ");
-        if($option != "s")
-            $continue = false;
-            
-    }
-    echo "\nAdiós";
-    return;
-}
+if (isset($_SESSION['codigo_temporal']) && isset($_SESSION['hora_creacion_codigo'])) {
 
-generateToken();
+    $hora_creacion_codigo =  $_SESSION['hora_creacion_codigo'];
+    $hora_actual = time();
+    $codigoIngresado = $_POST['codigo'];
+
+    if ($codigoIngresado == $_SESSION['codigo_temporal']) {
+        if (($hora_actual - $hora_creacion_codigo) > 600) {
+            echo 'La sesion ha expirado o el código no es correcto';
+            session_destroy();
+        } else
+            echo '¡Hola! ;)';
+    } else
+        echo "El codigo ingresado " . $codigoIngresado . " es incorrecto";
+} else
+    echo "No se ha iniciado una sesión ";
