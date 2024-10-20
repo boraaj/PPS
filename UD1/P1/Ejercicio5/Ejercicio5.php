@@ -113,3 +113,5 @@ else
 //     else
 //         echo "mail invallido";
 // }
+
+//list($usuario, $dominio) = explode('@', $email);

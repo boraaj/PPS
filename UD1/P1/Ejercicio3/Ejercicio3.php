@@ -14,6 +14,6 @@ if (isset($_SESSION['codigo_temporal']) && isset($_SESSION['hora_creacion_codigo
         } else
             echo '¡Hola! ;)';
     } else
-        echo "El codigo ingresado " . $codigoIngresado . " es incorrecto";
+        echo "El codigo ingresado " . htmlspecialchars($codigoIngresado) . " es incorrecto";
 } else
     echo "No se ha iniciado una sesión ";
